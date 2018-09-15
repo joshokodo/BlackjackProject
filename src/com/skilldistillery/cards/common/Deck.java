@@ -1,6 +1,7 @@
 package com.skilldistillery.cards.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,6 +32,14 @@ public class Deck {
 	
 	public void shuffle() {
 		Collections.shuffle(deck);
+	}
+	
+	public void addToDeck(Collection<Card> moreCards) {
+		deck.addAll(moreCards);
+	}
+	
+	public List<Card> getDeck() {
+		return deck;
 	}
 
 }

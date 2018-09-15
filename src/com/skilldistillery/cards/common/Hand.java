@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class Hand {
 	
-	protected List<Card> hand;
+	private List<Card> hand;
 	
 	public Hand() {
 		hand = new ArrayList<>();
@@ -23,6 +23,10 @@ public abstract class Hand {
 	
 	public List<Card> getHand(){
 		return hand;
+	}
+	
+	public Card takeCardOut(int cardIndex) {
+		return hand.remove(cardIndex);
 	}
 	
 	public String toString() {

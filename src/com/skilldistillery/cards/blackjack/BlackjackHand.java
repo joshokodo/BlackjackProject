@@ -13,7 +13,7 @@ public class BlackjackHand extends Hand {
 	public int getHandValue() {
 		int handValue = 0;
 		
-		for (Card card : hand) {
+		for (Card card : getHand()) {
 			handValue += card.getValue();
 		}
 		
