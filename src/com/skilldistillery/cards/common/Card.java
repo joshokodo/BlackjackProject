@@ -7,17 +7,14 @@ public class Card {
 	private final String TOP_VALUE_OF_CARD_IS_TEN = "|%s%3s|";
 	private final String BOTTOM_VALUE_OF_CARD = "|%s___%s|";
 	private final String BOTTOM_VALUE_OF_CARD_IS_TEN = "|%s__%s|";
+	private final String BOTTOM_OF_CARD_FACE_DOWN = "|%s__%s|";
+
 	private final String MIDDLE_OF_CARD = "|     |";
-
-
-	// _____
-	// |3 $|
-	// | |
-	// | |
-	// |$___3|
+	private final String MIDDLE_OF_CARD_FACE_DOWN = "|$$$$$$$|";
 
 	private Suit suit;
 	private Rank rank;
+	private boolean isFaceUp;
 	private String[] asciiCard = new String[5];
 
 	public Card() {
@@ -27,7 +24,7 @@ public class Card {
 	public Card(Suit suit, Rank rank) {
 		this.suit = suit;
 		this.rank = rank;
-		setAsciiCard();
+		flipCardDown();
 	}
 
 	@Override
@@ -71,31 +68,48 @@ public class Card {
 
 	public void setAsciiCard() {
 
-		String topValue = rank.equals(Rank.TEN) ? TOP_VALUE_OF_CARD_IS_TEN 
-												: TOP_VALUE_OF_CARD;
+		if (!isFaceUp) {
+			asciiCard[0] = TOP_OF_CARD;
+			asciiCard[1] = MIDDLE_OF_CARD_FACE_DOWN;
+			asciiCard[2] = MIDDLE_OF_CARD_FACE_DOWN;
+			asciiCard[3] = MIDDLE_OF_CARD_FACE_DOWN;
+			asciiCard[4] = BOTTOM_OF_CARD_FACE_DOWN;
+		} else {
 
-		String bottomValue = rank.equals(Rank.TEN) ? BOTTOM_VALUE_OF_CARD_IS_TEN 
-												   : BOTTOM_VALUE_OF_CARD;
+			String topValue = rank.equals(Rank.TEN) ? TOP_VALUE_OF_CARD_IS_TEN : TOP_VALUE_OF_CARD;
 
-		asciiCard[0] = TOP_OF_CARD;
-		asciiCard[1] = String.format(topValue, rank.toString(), suit.toString());
-		asciiCard[2] = MIDDLE_OF_CARD;
-		asciiCard[3] = MIDDLE_OF_CARD;
-		asciiCard[4] = String.format(bottomValue, suit.toString(), rank.toString());
+			String bottomValue = rank.equals(Rank.TEN) ? BOTTOM_VALUE_OF_CARD_IS_TEN : BOTTOM_VALUE_OF_CARD;
+
+			asciiCard[0] = TOP_OF_CARD;
+			asciiCard[1] = String.format(topValue, rank.toString(), suit.toString());
+			asciiCard[2] = MIDDLE_OF_CARD;
+			asciiCard[3] = MIDDLE_OF_CARD;
+			asciiCard[4] = String.format(bottomValue, suit.toString(), rank.toString());
+		}
 
 	}
 
 	public String getAsciiCard() {
 		StringBuilder card = new StringBuilder();
-		
+
 		for (String cardLine : asciiCard) {
 			card.append(cardLine + "\n");
 		}
 		return card.toString();
 	}
-	
+
 	public String getAsciiCard(int index) {
 		return asciiCard[index];
+	}
+
+	public void flipCardUp() {
+		this.isFaceUp = true;
+		setAsciiCard();
+	}
+
+	public void flipCardDown() {
+		this.isFaceUp = false;
+		setAsciiCard();
 	}
 
 }
