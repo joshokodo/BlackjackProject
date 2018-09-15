@@ -31,13 +31,13 @@ public class BlackjackMenu extends AbstractMenu {
 		addOption(MAIN_MENU_OPTION_1);
 		addOption(MAIN_MENU_OPTION_2);
 	}
-	public void setAsGameMenu() {
+	public void setAsUserMenu() {
 		clearAll();
 		addHeader(GAME_MENU_HEADER_1);
 		addOption(GAME_MENU_OPTION_1);
 		addOption(GAME_MENU_OPTION_2);
 	}
-	public void setAsGameMenuWithSplitOption() {
+	public void setAsUserMenuWithSplitOption() {
 		clearAll();
 		addHeader(GAME_MENU_HEADER_1);
 		addOption(GAME_MENU_OPTION_1);
