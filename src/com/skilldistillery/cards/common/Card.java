@@ -7,10 +7,10 @@ public class Card {
 	private final String TOP_VALUE_OF_CARD_IS_TEN = "|%s%3s|";
 	private final String BOTTOM_VALUE_OF_CARD = "|%s___%s|";
 	private final String BOTTOM_VALUE_OF_CARD_IS_TEN = "|%s__%s|";
-	private final String BOTTOM_OF_CARD_FACE_DOWN = "|%s__%s|";
+	private final String BOTTOM_OF_CARD_FACE_DOWN = "|?????|";
 
 	private final String MIDDLE_OF_CARD = "|     |";
-	private final String MIDDLE_OF_CARD_FACE_DOWN = "|$$$$$$$|";
+	private final String MIDDLE_OF_CARD_FACE_DOWN = "|?????|";
 
 	private Suit suit;
 	private Rank rank;

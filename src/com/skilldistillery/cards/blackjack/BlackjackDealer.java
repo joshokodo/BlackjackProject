@@ -1,15 +1,17 @@
 package com.skilldistillery.cards.blackjack;
 
+import java.util.List;
+
+import com.skilldistillery.cards.common.Card;
 import com.skilldistillery.cards.common.Deck;
 
-public class BlackjackDealer {
+public class BlackjackDealer extends BlackjackPlayer{
 	
 	private Deck deck;
-	private BlackjackHand hand;
 	
 	public BlackjackDealer() {
+		super(Long.MAX_VALUE);
 		deck = new Deck();
-		hand = new BlackjackHand();
 	}
 	
 	public void replenishDeck() {
@@ -17,11 +19,21 @@ public class BlackjackDealer {
 		deck.addToDeck(moreCards.getDeck());
 	}
 	
-	public Deck getDeck() {
-		return deck;
+	public void shuffleDeck() {
+		deck.shuffle();
 	}
-	public BlackjackHand getHand() {
-		return hand;
+	
+	public Card dealACard(boolean isFaceUp) {
+		return deck.dealCard(isFaceUp);
 	}
+	
+	public void dealCardToSelf(boolean isFaceUp) {
+		takeACard((dealACard(isFaceUp)));
+	}
+	
+	public List<Card> getDealerDeck() {
+		return deck.getDeck();
+	}
+	
 
 }

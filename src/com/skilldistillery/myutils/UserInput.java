@@ -6,7 +6,7 @@ public interface UserInput {
 
 	final Scanner KEYBOARD = new Scanner(System.in);
 	final String INVALID_INPUT_PROMPT = "Not a valid input. Please try again.";
-	final String OUT_OF_RANGE_PROMPT = "text not within specific range. Please try again";
+	final String OUT_OF_RANGE_PROMPT = "Input not within specific range. Please try again";
 
 	// scanner input methods
 	default int getIntInput() {
@@ -18,6 +18,31 @@ public interface UserInput {
 
 			try {
 				num = Integer.parseInt(stringChoice);
+			} catch (NumberFormatException e) {
+				System.out.println(INVALID_INPUT_PROMPT);
+				continue;
+			}
+			break;
+		}
+		return num;
+	}
+	
+	default int getIntInput(int min, int max) {
+		int num = -1;
+		
+		while (true) {
+			String stringChoice = KEYBOARD.next();
+			KEYBOARD.nextLine(); // to get rid of any trailing texts
+			
+			try {
+				num = Integer.parseInt(stringChoice);
+
+				boolean withinRange = num >= min && num <= max;
+				if(!withinRange) {
+					System.out.println(OUT_OF_RANGE_PROMPT);
+					continue;
+				}
+				
 			} catch (NumberFormatException e) {
 				System.out.println(INVALID_INPUT_PROMPT);
 				continue;

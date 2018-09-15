@@ -3,13 +3,10 @@ package com.skilldistillery.myutils;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractMenu implements Menu {
+public abstract class AbstractMenu{
 
-	// useful char finals
-	protected static final Character AIRPLANE_CHAR = '\u2708';
-	protected static final Character PACKAGE_CHAR = '\u2709';
-	protected static final Character SWORDS_CHAR = '\u2694';
-
+	private final int SPACING_CUSHION = 4;
+	
 	// fields
 	private List<String> headers;
 	private List<String> options;
@@ -21,10 +18,10 @@ public abstract class AbstractMenu implements Menu {
 		lining = '*';
 	}
 
-	public AbstractMenu(char lining, List<String> headers, List<String> options) {
-		this.headers = headers;
+	public AbstractMenu(char lining) {
+		headers = new ArrayList<>();
+		options = new ArrayList<>();
 		this.lining = lining;
-		this.options = options;
 	}
 
 	// setters and getters
@@ -52,7 +49,6 @@ public abstract class AbstractMenu implements Menu {
 		this.lining = lining;
 	}
 
-	
 	// manipulate headers and options
 	public void addOption(String option) {
 		options.add(option);
@@ -73,29 +69,130 @@ public abstract class AbstractMenu implements Menu {
 		options.set(replaceIndex, newOption);
 
 	}
+
 	public void addHeader(String header) {
 		headers.add(header);
 	}
-	
+
 	public void removeHeader(int index) {
 		headers.remove(index);
-		
+
 	}
-	
+
 	public void removeHeader(String header) {
 		headers.remove(header);
 	}
-	
+
 	public void replaceHeader(String removedHeader, String newHeader) {
-		
+
 		int replaceIndex = headers.indexOf(removedHeader);
 		headers.set(replaceIndex, newHeader);
-		
+
 	}
-	
+
+	public void clearHeaders() {
+		headers.clear();
+	}
+
+	public void clearOptions() {
+		options.clear();
+	}
+
+	public void clearAll() {
+		clearHeaders();
+		clearOptions();
+	}
+
 	// other methods
 	public String buildMenu() {
 		return buildCustomMenu(lining, headers, options);
+	}
+	
+	// helper methods
+	private String buildCustomMenu(char lining, List<String> headers, List<String> options) {
+
+		// determines space between lining by finding longest length string line
+		// and adding 4 to it
+		int space = getLongestLength(headers, options) + SPACING_CUSHION;
+
+		StringBuilder menu = new StringBuilder(getCustomBorder(lining, space));
+		menu.append(getCustomSpace(lining, space));
+
+		for (String header : headers) {
+			menu.append(getMenuHeader(lining, space, header));
+		}
+
+		menu.append(getCustomSpace(lining, space));
+
+		for (String option : options) {
+			menu.append(getMenuOption(lining, space, option));
+			menu.append(getCustomSpace(lining, space));
+		}
+		menu.append(getCustomBorder(lining, space));
+
+		return menu.toString();
+	}
+	
+	private String getCustomBorder(char lining, int space) {
+		// string builder okay
+		StringBuilder border = new StringBuilder("" + lining + lining);
+		for (int i = 0; i < space; i++) {
+			border.append(lining);
+		}
+		border.append("\n");
+		return border.toString();
+	}
+
+	private String getCustomSpace(char lining, int space) {
+		StringBuilder border = new StringBuilder();
+		border.append(lining);
+		for (int i = 0; i < space; i++) {
+			border.append(" ");
+		}
+		border.append(lining + "\n");
+		return border.toString();
+	}
+
+	// returns a formatted menu option line
+	private String getMenuOption(char lining, int space, String option) {
+
+		// --space makes up for space between left lining and option
+		String format = "%c %-" + --space + "s%c%n";
+		return String.format(format, lining, option, lining);
+	}
+
+	private String getMenuHeader(char lining, int space, String header) {
+
+		// calculates the remaining space when putting header in the line
+		// should always be at least 4;
+		int remainingSpace = (space - header.length());
+
+		int leftSpace = 1 + remainingSpace / 2;
+		int rightSpace = 1 + remainingSpace / 2;
+
+		if (remainingSpace % 2 != 0) {
+
+			rightSpace++;
+		}
+
+		String format = "%-" + leftSpace + "c%s%" + rightSpace + "c%n";
+		return String.format(format, lining, header, lining);
+	}
+
+	private int getLongestLength(List<String> headers, List<String> options) {
+		int longest = 0;
+
+		for (String header : headers) {
+			if (header.length() > longest) {
+				longest = header.length();
+			}
+		}
+		for (String option : options) {
+			if (option.length() > longest) {
+				longest = option.length();
+			}
+		}
+		return longest;
 	}
 
 }

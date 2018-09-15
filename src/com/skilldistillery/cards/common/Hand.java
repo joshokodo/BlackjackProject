@@ -11,7 +11,13 @@ public abstract class Hand {
 		hand = new ArrayList<>();
 	}
 	
-	abstract public int getHandValue();
+	public int getTotalValue() {
+		int totalValue = 0;
+		for (Card card : hand) {
+			totalValue += card.getValue();
+		}
+		return totalValue;
+	}
 	
 	public void addCard(Card newCard) {
 		hand.add(newCard);
@@ -21,7 +27,7 @@ public abstract class Hand {
 		hand.clear();
 	}
 	
-	public List<Card> getHand(){
+	public List<Card> getCards(){
 		return hand;
 	}
 	

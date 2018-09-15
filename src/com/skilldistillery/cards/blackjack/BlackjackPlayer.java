@@ -1,48 +1,62 @@
 package com.skilldistillery.cards.blackjack;
 
+import java.util.List;
+
+import com.skilldistillery.cards.common.Card;
 
 public class BlackjackPlayer {
 	
 	private BlackjackHand hand;
-	private long cash;
+	private long money;
 	
 	public BlackjackPlayer() {
 		hand = new BlackjackHand();
-		cash = 500;
+		money = 500;
 	}
 
 	public BlackjackPlayer(long cash) {
 		hand = new BlackjackHand();
-		this.cash = cash;
+		this.money = cash;
 	}
 
-	public BlackjackHand getHand() {
-		return hand;
-	}
-
-	public long getCash() {
-		return cash;
-	}
-
-	public void setCash(long cash) {
-		this.cash = cash;
+	// setters and getters
+	public List<Card> getHand() {
+		return hand.getCards();
 	}
 	
-	public void winCash(long someCash) {
+	public long getMoney() {
+		return money;
+	}
+	
+	public void setMoney(long cash) {
+		this.money = cash;
+	}
+	
+	public int getHandValue() {
+		return hand.getTotalValue();
+	}
+	
+	// other methods
+	public void takeACard(Card card) {
+		hand.addCard(card);
+	}
+
+	// money manipulator methods
+	public void winMoney(long someCash) {
 		if(someCash < 0) {
 			return;
 		}
 		else {
-			cash += someCash;
+			money += someCash;
 		}
 	}
 	
-	public void loseCash(long someCash) {
+	public void loseMoney(long someCash) {
 		if(someCash < 0) {
 			return;
 		}
 		else {
-			cash -= someCash;
+			money -= someCash;
 		}
 		
 	}

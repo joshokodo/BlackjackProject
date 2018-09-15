@@ -25,9 +25,14 @@ public class Deck {
 		return deck.size();
 	}
 	
-	public Card dealCard() {
+	public Card dealCard(Boolean isFaceUp) {
 		int indexOfTopCard = deck.size() - 1;
-		return deck.remove(indexOfTopCard);
+		Card dealtCard = deck.remove(indexOfTopCard);
+		
+		if(isFaceUp) { dealtCard.flipCardUp(); }
+		else { dealtCard.flipCardDown(); }
+		
+		return dealtCard;
 	}
 	
 	public void shuffle() {

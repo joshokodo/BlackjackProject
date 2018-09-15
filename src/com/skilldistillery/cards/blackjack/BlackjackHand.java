@@ -10,10 +10,10 @@ public class BlackjackHand extends Hand {
 	}
 
 	@Override
-	public int getHandValue() {
+	public int getTotalValue() {
 		int handValue = 0;
 		
-		for (Card card : getHand()) {
+		for (Card card : getCards()) {
 			handValue += card.getValue();
 		}
 		
