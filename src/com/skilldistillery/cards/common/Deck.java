@@ -15,9 +15,12 @@ public class Deck {
 	deck = new ArrayList<>();
 
 	for (Suit suit : suits) {
+	    
 	    for (Rank rank : ranks) {
 		
-		deck.add(new Card(suit, rank));
+		if(!rank.equals(Rank.LOW_ACE)) {
+		    deck.add(new Card(suit, rank));
+		}
 	    }
 	}
     }

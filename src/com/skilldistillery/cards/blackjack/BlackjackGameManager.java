@@ -3,6 +3,7 @@ package com.skilldistillery.cards.blackjack;
 import java.util.List;
 
 import com.skilldistillery.cards.common.Card;
+import com.skilldistillery.cards.common.Rank;
 import com.skilldistillery.myutils.UserInput;
 
 public class BlackjackGameManager implements UserInput {
@@ -113,6 +114,7 @@ public class BlackjackGameManager implements UserInput {
 
 	case 1:
 	    player.takeACard(dealer.dealACard(true));
+	    checkAces(player);
 	    printGameStatus();
 	    break;
 
@@ -140,6 +142,7 @@ public class BlackjackGameManager implements UserInput {
 	    }
 
 	    dealer.dealCardToSelf(true);
+	    checkAces(dealer);
 	    printGameStatus();
 	}
     }
@@ -218,7 +221,22 @@ public class BlackjackGameManager implements UserInput {
 	}
     }
 
+    
+    private void checkAces(BlackjackPlayer player) {
+	if (someoneBusted(player)) {
+	    
+	    for (Card card : player.getHand()) {
+		
+		if(card.getRank().equals(Rank.HIGH_ACE)) {
+		    card.setRank(Rank.LOW_ACE);
+		}
+	    }
+	}
+    }
     // condition checks
+    
+    // checks if player/dealer busted and if they have a 
+    // soft Ace, turns it hard
     private boolean someoneBusted(BlackjackPlayer player) {
 	return player.getHandValue() > 21;
     }
