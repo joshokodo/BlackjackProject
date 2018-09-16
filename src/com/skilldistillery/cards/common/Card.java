@@ -57,6 +57,10 @@ public class Card {
 	card.append(" of " + suit.toString());
 	return card.toString();
     }
+    
+    public boolean isFaceUp() {
+        return isFaceUp;
+    }
 
     public int getValue() {
 	return rank.getValue();

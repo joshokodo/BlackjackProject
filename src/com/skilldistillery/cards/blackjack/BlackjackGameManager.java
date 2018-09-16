@@ -10,14 +10,18 @@ public class BlackjackGameManager implements UserInput {
     private BlackjackMenu menu;
     private BlackjackPlayer player;
     private BlackjackDealer dealer;
+    private boolean gameover;
     private boolean playerWon;
+    private long bet;
 
     public BlackjackGameManager() {
 	menu = new BlackjackMenu();
-	menu.setAsMainMenu();
 	player = new BlackjackPlayer();
 	dealer = new BlackjackDealer();
+	gameover = false;
 	playerWon = false;
+	bet = 0;
+
     }
 
     public static void main(String[] args) {
@@ -27,133 +31,68 @@ public class BlackjackGameManager implements UserInput {
     }
 
     public void runProgram() {
-
+	menu.setAsMainMenu();
 	menu.printMenu();
 	performMainMenuOption(getIntInput(1, 2));
 
     }
-    
-    private void runGame() {
-	initialStart();
-	long bet = 0;
-	while (true) {
-	    
-	    if(player.getMoney() >= 5) {
-		
-		menu.setAsBetsMenu(player.getMoney());
-		menu.printMenu();
-		bet = getLongInput(5, player.getMoney());
-	    }
-	    else {
-		System.out.println("Looks like you got not money to spend.");
-		System.out.println("Come back when you got some doe.");
-		break;
+
+    public void playGame() {
+
+	boolean stillPlaying = true;
+
+	while (stillPlaying) {
+
+	    initialStart();
+	    bet = placeBet(); // returns zero if player can't bet at least minimum
+
+	    if (bet <= 0) {
+		exitProgram();
 	    }
 
-	    if (hasBlackjack(player)) {
-		playerWon = true;
-	    } 
-	    else {
-		
-		if (playersTurn()) {
-		    playerWon = dealersTurn();
+	    // shows opening hand of player and sets up game menu
+	    printGameStatus();
+	    menu.setAsGameMenu();
+
+	    while (!gameover) {
+
+		if (playerIsDone()) {
+		    gameover = true;
+		} 
+		else {
+		    menu.printMenu();
+		    performGameMenuOption(getIntInput(1, 2));
+		    gameover = dealerIsDone();
 		}
 	    }
-	    
-	    if (playerWon) {
-		player.winMoney(bet);
-		menu.setAsWinPlayAgainMenu(player.getMoney());
+
+	    playerWon = didPlayerWin();
+	    gameAftermath();
+
+	    menu.printMenu();
+	    int choice = getIntInput(1, 2);
+	    stillPlaying = choice == 1 ? true : false;
+
+	    resetRound();
+
+	}
+    }
+
+    private void gameAftermath() {
+	if (playerWon) {
+	    player.winMoney(bet);
+	    menu.setAsWinPlayAgainMenu(player.getMoney());
+	} 
+	else {
+
+	    // if game was pushed
+	    if (hasSameValue(player, dealer)) {
+		menu.setAsTiePlayAgainMenu(player.getMoney());
 	    } 
 	    else {
 		player.loseMoney(bet);
 		menu.setAsLosePlayAgainMenu(player.getMoney());
 	    }
-	    
-	    menu.printMenu();
-	    int choice = getIntInput(1, 2);
-	    if(choice == 1) {
-		resetRound();
-		continue;
-	    }
-	    else {
-		break;
-	    }
-
-	}
-	exitProgram();
-
-    }
-    
-    public void playGame() {
-	
-	boolean stillPlaying = true;
-	
-	while(stillPlaying) {
-	    
-	    initialStart();
-	    boolean gameover = false;
-	    long bet = 0;
-	    int choice = -1;
-	    
-	    while(!gameover) {
-		
-		bet = placeBet();
-		
-		if(bet <= 0) {
-		    gameover = true;
-		}
-		//is duplicated below key 1
-		else if(hasBlackjack(player)) {
-		    
-		    gameover = true;
-		    printGameStatus(false);
-		    
-		    if(isBlackjackWin()) {
-			menu.setAsWinPlayAgainMenu(player.getMoney());
-			player.winMoney(bet);
-		    }
-		    
-		    else {
-			menu.setAsTiePlayAgainMenu(player.getMoney());
-		    }
-		    
-		}
-		else {
-		    
-		    printGameStatus(true);
-		    
-		    menu.setAsGameMenu();
-		    menu.printMenu();
-		    choice = getIntInput(1, 2);
-		    
-		    printGameStatus(false);
-
-		    if(playerBusted(player)) {
-			menu.setAsLosePlayAgainMenu(player.getMoney());
-			player.loseMoney(bet);
-		    }
-		    //is duplicated above key 1
-		    else if(hasBlackjack(player)) {
-			    
-			gameover = true;
-			printGameStatus(false);
-			    
-			if(isBlackjackWin()) {
-			    menu.setAsWinPlayAgainMenu(player.getMoney());
-			    player.winMoney(bet);
-			}  
-			else {
-			    menu.setAsTiePlayAgainMenu(player.getMoney());
-			}
-			    
-		    }
-		}
-		
-		
-	    }
-	    resetRound();
-	    
-	    
 	}
     }
 
@@ -161,85 +100,47 @@ public class BlackjackGameManager implements UserInput {
 	switch (choice) {
 
 	case 1:
-	    runGame();
+	    playGame();
 	    break;
 
 	case 2:
 	    exitProgram();
 	}
     }
+
     private void performGameMenuOption(int choice) {
 	switch (choice) {
-	
+
 	case 1:
 	    player.takeACard(dealer.dealACard(true));
+	    printGameStatus();
 	    break;
-	    
+
 	case 2:
-	    exitProgram();
+	    dealersTurn();
+	    break;
+
+	default:
+	    System.out.println("Im from performGameMenuOption default case. I Shouldnt be printing");
+
 	}
-    }
-
-    // returns true if the game should continue to the dealers turn
-    // retunrs false if player either won or lost
-    private boolean playersTurn() {
-	menu.setAsGameMenu();
-	boolean playerStayed = false;
-
-	do {
-
-	    printGameStatus(true);
-
-	    menu.printMenu();
-	    int choice = getIntInput(1, 2);
-
-	    if (choice == 1) {
-		player.takeACard(dealer.dealACard(true));
-	    } 
-	    else if (choice == 2) {
-		playerStayed = true;
-		continue;
-	    }
-
-	    if (playerBusted(player)) {
-		playerWon = false;
-		return false;
-	    }
-	    if (hasBlackjack(player)) {
-		playerWon = true;
-		return false;
-	    }
-
-	} while (!playerStayed);
-
-	return true;
 
     }
 
-    // returns true if player won, false if player loses
-    private boolean dealersTurn() {
+    private void dealersTurn() {
+
+	// reveals dealers card and shows opening hand
 	dealer.getHand().get(1).flipCardUp();
+	printGameStatus();
 
 	while (true) {
 
-	    printGameStatus(false);
-
-	    if (hasBlackjack(dealer)) {
-		return false;
-	    } 
-	    else if (!playerBusted(dealer)) {
-
-		if (hasBetterValue(dealer, player)) {
-		    return false;
-		}
-		dealer.dealCardToSelf(true);
-		continue;
-
-	    } 
-	    else {
-		return true;
+	    if (dealerIsDone()) {
+		return;
 	    }
 
+	    dealer.dealCardToSelf(true);
+	    printGameStatus();
 	}
     }
 
@@ -250,27 +151,27 @@ public class BlackjackGameManager implements UserInput {
 	System.exit(0);
 
     }
-    
+
     private void resetRound() {
-	resetHands();
+	player.getHand().clear();
+	dealer.getHand().clear();
 	checkToReplenish();
-	initialStart();
     }
 
     private void initialStart() {
+	gameover = false;
+	playerWon = false;
+	bet = 0;
+
 	dealer.shuffleDeck();
 	player.takeACard(dealer.dealACard(true));
 	dealer.dealCardToSelf(true);
 	player.takeACard(dealer.dealACard(true));
 	dealer.dealCardToSelf(false);
     }
-    
-    private void resetHands() {
-	player.getHand().clear();
-	dealer.getHand().clear();
-    }
+
     private void checkToReplenish() {
-	if(dealer.getDeck().size() <= 15) {
+	if (dealer.getDeck().size() <= 15) {
 	    dealer.replenishDeck();
 	    dealer.shuffleDeck();
 	}
@@ -290,8 +191,8 @@ public class BlackjackGameManager implements UserInput {
 
     }
 
-    private void printGameStatus(boolean playerTurn) {
-	int dealerValue = playerTurn ? dealer.getHand().get(0).getValue() : dealer.getHandValue();
+    private void printGameStatus() {
+	int dealerValue = dealer.getHandValue();
 
 	int playerValue = player.getHandValue();
 
@@ -302,23 +203,23 @@ public class BlackjackGameManager implements UserInput {
 	System.out.println("Your hand value: " + playerValue);
 	System.out.println("-------------------------------------------------------");
     }
+
     private long placeBet() {
-	if(player.getMoney() >= 5) {
-		
+	if (player.getMoney() >= 5) {
+
 	    menu.setAsBetsMenu(player.getMoney());
 	    menu.printMenu();
 	    return getLongInput(5, player.getMoney());
-	}
+	} 
 	else {
-	    System.out.println("Looks like you got not money to spend.");
+	    System.out.println("Looks like you got no money to spend.");
 	    System.out.println("Come back when you got some doe.");
 	    return 0;
 	}
     }
 
-    
     // condition checks
-    private boolean playerBusted(BlackjackPlayer player) {
+    private boolean someoneBusted(BlackjackPlayer player) {
 	return player.getHandValue() > 21;
     }
 
@@ -329,24 +230,39 @@ public class BlackjackGameManager implements UserInput {
     private boolean hasBlackjack(BlackjackPlayer player) {
 	return player.getHandValue() == 21;
     }
-    
+
     private boolean hasSameValue(BlackjackPlayer p1, BlackjackPlayer p2) {
 	return p1.getHandValue() == p2.getHandValue();
     }
-    
+
     private boolean dealerPastSeventeen() {
 	return dealer.getHandValue() >= 17;
     }
-    
-    private boolean isBlackjackWin() {
-	
-	if(hasBlackjack(player) && hasBlackjack(dealer)) {
-	    return false;
-	} 
-	else {
-	    return true;
-		
+
+    private boolean playerIsDone() {
+	return someoneBusted(player) || hasBlackjack(player);
+    }
+
+    private boolean dealerIsDone() {
+	return dealerPastSeventeen() || someoneBusted(dealer) || 
+		hasBetterValue(dealer, player) || hasBlackjack(dealer);
+    }
+
+    private boolean didPlayerWin() {
+
+	// ensures dealers hidden card is accounted for
+	// when determining winner and prints last game status
+	boolean dealerHasHiddenCard = !dealer.getHand().get(1).isFaceUp();
+	if(dealerHasHiddenCard) {
+	    dealer.getHand().get(1).flipCardUp();
+	    printGameStatus();
 	}
 	
+	boolean winCondition1 = hasBlackjack(player) && !hasBlackjack(dealer);
+	boolean winCondition2 = !someoneBusted(player) && hasBetterValue(player, dealer);
+	boolean winCondition3 = someoneBusted(dealer);
+	
+	return winCondition1 || winCondition2 || winCondition3;
     }
+
 }

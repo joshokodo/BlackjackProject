@@ -16,6 +16,7 @@ public class Deck {
 
 	for (Suit suit : suits) {
 	    for (Rank rank : ranks) {
+		
 		deck.add(new Card(suit, rank));
 	    }
 	}

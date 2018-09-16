@@ -5,21 +5,21 @@ import com.skilldistillery.cards.common.Hand;
 
 public class BlackjackHand extends Hand {
 
-	public BlackjackHand() {
-		
+    public BlackjackHand() {
+
+    }
+
+    @Override
+    public int getTotalValue() {
+	int handValue = 0;
+
+	for (Card card : getCards()) {
+	    if(card.isFaceUp()) {
+		handValue += card.getValue();
+	    }
 	}
 
-	@Override
-	public int getTotalValue() {
-		int handValue = 0;
-		
-		for (Card card : getCards()) {
-			handValue += card.getValue();
-		}
-		
-		return handValue;
-	}
-	
-	
+	return handValue;
+    }
 
 }
