@@ -6,12 +6,12 @@ import java.util.List;
 import com.skilldistillery.cards.common.Card;
 import com.skilldistillery.cards.common.Deck;
 
-public class BlackjackDealer extends BlackjackPlayer {
+public class BlackjackDealer extends AbstractBlackjackPlayer {
 
     private Deck deck;
 
     public BlackjackDealer() {
-	super(Long.MAX_VALUE);
+	super();
 	deck = new Deck();
     }
 
@@ -29,7 +29,7 @@ public class BlackjackDealer extends BlackjackPlayer {
     }
 
     public void dealCardToSelf(boolean isFaceUp) {
-	takeACard((dealACard(isFaceUp)));
+	addCardToHand((dealACard(isFaceUp)));
     }
 
     public List<Card> getDeck() {

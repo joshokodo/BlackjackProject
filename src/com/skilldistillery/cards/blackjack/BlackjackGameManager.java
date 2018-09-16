@@ -53,8 +53,9 @@ public class BlackjackGameManager implements UserInput {
 
 	    // shows opening hand of player and sets up game menu
 	    printGameStatus();
-	    menu.setAsGameMenu();
-
+	    menu.setAsInitialGameMenu(bet);
+	    int choice = -1;
+	    
 	    while (!gameover) {
 
 		if (playerIsDone()) {
@@ -62,7 +63,15 @@ public class BlackjackGameManager implements UserInput {
 		} 
 		else {
 		    menu.printMenu();
-		    performGameMenuOption(getIntInput(1, 2));
+		    
+		    choice = getIntInput(1, 3);
+		    
+		    performGameMenuOption(choice);
+		    //menu.setAsGameMenu();
+		    
+		    if(choice == 3) {
+			performGameMenuOption(2);
+		    }
 		    gameover = dealerIsDone();
 		}
 	    }
@@ -71,7 +80,7 @@ public class BlackjackGameManager implements UserInput {
 	    gameAftermath();
 
 	    menu.printMenu();
-	    int choice = getIntInput(1, 2);
+	    choice = getIntInput(1, 2);
 	    stillPlaying = choice == 1 ? true : false;
 
 	    resetRound();
@@ -82,7 +91,7 @@ public class BlackjackGameManager implements UserInput {
     private void gameAftermath() {
 	if (playerWon) {
 	    player.winMoney(bet);
-	    menu.setAsWinPlayAgainMenu(player.getMoney());
+	    menu.setAsWinPlayAgainMenu(player.getMoney(), bet);
 	} 
 	else {
 
@@ -92,7 +101,7 @@ public class BlackjackGameManager implements UserInput {
 	    } 
 	    else {
 		player.loseMoney(bet);
-		menu.setAsLosePlayAgainMenu(player.getMoney());
+		menu.setAsLosePlayAgainMenu(player.getMoney(), bet);
 	    }
 	}
     }
@@ -111,9 +120,11 @@ public class BlackjackGameManager implements UserInput {
 
     private void performGameMenuOption(int choice) {
 	switch (choice) {
-
+	
+	case 3:
+	    bet *= 2;
 	case 1:
-	    player.takeACard(dealer.dealACard(true));
+	    player.addCardToHand(dealer.dealACard(true));
 	    checkAces(player);
 	    printGameStatus();
 	    break;
@@ -132,7 +143,7 @@ public class BlackjackGameManager implements UserInput {
     private void dealersTurn() {
 
 	// reveals dealers card and shows opening hand
-	dealer.getHand().get(1).flipCardUp();
+	dealer.getCardFromHand(1).flipCardUp();
 	printGameStatus();
 
 	while (true) {
@@ -156,8 +167,8 @@ public class BlackjackGameManager implements UserInput {
     }
 
     private void resetRound() {
-	player.getHand().clear();
-	dealer.getHand().clear();
+	player.getAllCardsFromHand().clear();
+	dealer.getAllCardsFromHand().clear();
 	checkToReplenish();
     }
 
@@ -167,9 +178,9 @@ public class BlackjackGameManager implements UserInput {
 	bet = 0;
 
 	dealer.shuffleDeck();
-	player.takeACard(dealer.dealACard(true));
+	player.addCardToHand(dealer.dealACard(true));
 	dealer.dealCardToSelf(true);
-	player.takeACard(dealer.dealACard(true));
+	player.addCardToHand(dealer.dealACard(true));
 	dealer.dealCardToSelf(false);
     }
 
@@ -199,10 +210,10 @@ public class BlackjackGameManager implements UserInput {
 
 	int playerValue = player.getHandValue();
 
-	printCards(dealer.getHand());
+	printCards(dealer.getAllCardsFromHand());
 	System.out.println("Dealers hand value: " + dealerValue);
 
-	printCards(player.getHand());
+	printCards(player.getAllCardsFromHand());
 	System.out.println("Your hand value: " + playerValue);
 	System.out.println("-------------------------------------------------------");
     }
@@ -222,10 +233,10 @@ public class BlackjackGameManager implements UserInput {
     }
 
     
-    private void checkAces(BlackjackPlayer player) {
+    private void checkAces(AbstractBlackjackPlayer player) {
 	if (someoneBusted(player)) {
 	    
-	    for (Card card : player.getHand()) {
+	    for (Card card : player.getAllCardsFromHand()) {
 		
 		if(card.getRank().equals(Rank.HIGH_ACE)) {
 		    card.setRank(Rank.LOW_ACE);
@@ -237,19 +248,19 @@ public class BlackjackGameManager implements UserInput {
     
     // checks if player/dealer busted and if they have a 
     // soft Ace, turns it hard
-    private boolean someoneBusted(BlackjackPlayer player) {
+    private boolean someoneBusted(AbstractBlackjackPlayer player) {
 	return player.getHandValue() > 21;
     }
 
-    private boolean hasBetterValue(BlackjackPlayer p1, BlackjackPlayer p2) {
+    private boolean hasBetterValue(AbstractBlackjackPlayer p1, AbstractBlackjackPlayer p2) {
 	return p1.getHandValue() > p2.getHandValue();
     }
 
-    private boolean hasBlackjack(BlackjackPlayer player) {
+    private boolean hasBlackjack(AbstractBlackjackPlayer player) {
 	return player.getHandValue() == 21;
     }
 
-    private boolean hasSameValue(BlackjackPlayer p1, BlackjackPlayer p2) {
+    private boolean hasSameValue(AbstractBlackjackPlayer p1, AbstractBlackjackPlayer p2) {
 	return p1.getHandValue() == p2.getHandValue();
     }
 
@@ -270,9 +281,9 @@ public class BlackjackGameManager implements UserInput {
 
 	// ensures dealers hidden card is accounted for
 	// when determining winner and prints last game status
-	boolean dealerHasHiddenCard = !dealer.getHand().get(1).isFaceUp();
+	boolean dealerHasHiddenCard = !dealer.getCardFromHand(1).isFaceUp();
 	if(dealerHasHiddenCard) {
-	    dealer.getHand().get(1).flipCardUp();
+	    dealer.getCardFromHand(1).flipCardUp();
 	    printGameStatus();
 	}
 	

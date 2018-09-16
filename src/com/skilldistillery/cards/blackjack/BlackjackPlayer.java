@@ -1,29 +1,18 @@
 package com.skilldistillery.cards.blackjack;
 
-import java.util.List;
+public class BlackjackPlayer extends AbstractBlackjackPlayer{
 
-import com.skilldistillery.cards.common.Card;
-
-public class BlackjackPlayer {
-
-    private BlackjackHand hand;
+    private BlackjackHand splitHand;
     private long money;
 
     public BlackjackPlayer() {
-	hand = new BlackjackHand();
+	super();
+	splitHand = new BlackjackHand();
 	money = 500;
     }
 
-    public BlackjackPlayer(long cash) {
-	hand = new BlackjackHand();
-	this.money = cash;
-    }
-
     // setters and getters
-    public List<Card> getHand() {
-	return hand.getCards();
-    }
-
+   
     public long getMoney() {
 	return money;
     }
@@ -32,14 +21,6 @@ public class BlackjackPlayer {
 	this.money = cash;
     }
 
-    public int getHandValue() {
-	return hand.getTotalValue();
-    }
-
-    // other methods
-    public void takeACard(Card card) {
-	hand.addCard(card);
-    }
 
     // money manipulator methods
     public void winMoney(long someCash) {
