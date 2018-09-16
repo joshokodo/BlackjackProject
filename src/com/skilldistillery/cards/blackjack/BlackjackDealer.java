@@ -14,6 +14,10 @@ public class BlackjackDealer extends AbstractBlackjackPlayer {
 	super();
 	deck = new Deck();
     }
+    public BlackjackDealer(boolean whatever) {
+	super();
+	deck = new Deck(whatever);
+    }
 
     public void replenishDeck() {
 	Deck moreCards = new Deck();

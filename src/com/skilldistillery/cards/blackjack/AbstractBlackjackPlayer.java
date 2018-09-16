@@ -39,6 +39,7 @@ public abstract class AbstractBlackjackPlayer {
     public Card removeCardFromHand(int index) {
 	return hand.takeCardOut(index);
     }
+    
     public Card getCardFromHand(int index) {
 	return hand.getCards().get(index);
     }

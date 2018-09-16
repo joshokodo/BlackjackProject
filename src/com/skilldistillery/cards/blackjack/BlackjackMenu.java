@@ -16,6 +16,7 @@ public class BlackjackMenu extends AbstractMenu {
     private final static String GAME_MENU_OPTION_1 = "1. Hit";
     private final static String GAME_MENU_OPTION_2 = "2. Stay";
     private final static String GAME_MENU_OPTION_3 = "3. Double Down";
+    private final static String GAME_MENU_OPTION_4 = "4. Split";
     
     private final static String BETS_MENU_HEADER_1 = "You currently have $";
     private final static String BETS_MENU_HEADER_2 = "Okay, hotshot. Place your bet! ($5 Minimum)";
@@ -60,6 +61,15 @@ public class BlackjackMenu extends AbstractMenu {
 	addOption(GAME_MENU_OPTION_1);
 	addOption(GAME_MENU_OPTION_2);
 	addOption(GAME_MENU_OPTION_3);
+    }
+    public void setAsInitialGameMenuWithSplitOption(long betAmount) {
+	clearAll();
+	addHeader(GENERAL_BETS_MENU_HEADER + betAmount);
+	addHeader(GAME_MENU_HEADER_1);
+	addOption(GAME_MENU_OPTION_1);
+	addOption(GAME_MENU_OPTION_2);
+	addOption(GAME_MENU_OPTION_3);
+	addOption(GAME_MENU_OPTION_4);
     }
 
     public void setAsWinPlayAgainMenu(long playerMoney, long betAmount) {

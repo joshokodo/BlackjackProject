@@ -19,6 +19,7 @@ public class BlackjackGameManager implements UserInput {
 	menu = new BlackjackMenu();
 	player = new BlackjackPlayer();
 	dealer = new BlackjackDealer();
+	//dealer = new BlackjackDealer(true);
 	gameover = false;
 	playerWon = false;
 	bet = 0;
@@ -53,8 +54,19 @@ public class BlackjackGameManager implements UserInput {
 
 	    // shows opening hand of player and sets up game menu
 	    printGameStatus();
-	    menu.setAsInitialGameMenu(bet);
+	    
 	    int choice = -1;
+	    int choiceMax = 2;
+	    
+	    if(playerCanSplit()) {
+		menu.setAsInitialGameMenuWithSplitOption(bet);
+		choiceMax = 4;
+	    }
+	    else {
+		menu.setAsInitialGameMenu(bet);
+		choiceMax = 3;
+	    }
+	    
 	    
 	    while (!gameover) {
 
@@ -64,13 +76,17 @@ public class BlackjackGameManager implements UserInput {
 		else {
 		    menu.printMenu();
 		    
-		    choice = getIntInput(1, 3);
+		    choice = getIntInput(1, choiceMax);
+		    choiceMax = 2;
 		    
 		    performGameMenuOption(choice);
-		    //menu.setAsGameMenu();
+		    menu.setAsGameMenu(bet);
 		    
 		    if(choice == 3) {
 			performGameMenuOption(2);
+		    }
+		    else if(choice == 4) {
+			
 		    }
 		    gameover = dealerIsDone();
 		}
@@ -86,6 +102,7 @@ public class BlackjackGameManager implements UserInput {
 	    resetRound();
 
 	}
+	exitProgram();
     }
 
     private void gameAftermath() {
@@ -132,7 +149,10 @@ public class BlackjackGameManager implements UserInput {
 	case 2:
 	    dealersTurn();
 	    break;
-
+	    
+	case 4:
+	    player.splitTheHand();
+	    break;
 	default:
 	    System.out.println("Im from performGameMenuOption default case. I Shouldnt be printing");
 
@@ -245,9 +265,15 @@ public class BlackjackGameManager implements UserInput {
 	}
     }
     // condition checks
-    
-    // checks if player/dealer busted and if they have a 
-    // soft Ace, turns it hard
+    private boolean playerCanSplit() {
+	if(player.getAllCardsFromHand().size() == 2) {
+	    Rank cardRank1 = player.getCardFromHand(0).getRank();
+	    Rank cardRank2 = player.getCardFromHand(1).getRank();
+	    
+	    return cardRank1.equals(cardRank2);
+	}
+	return false;
+    }
     private boolean someoneBusted(AbstractBlackjackPlayer player) {
 	return player.getHandValue() > 21;
     }

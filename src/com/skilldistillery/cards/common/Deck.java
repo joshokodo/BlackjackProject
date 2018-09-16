@@ -24,6 +24,13 @@ public class Deck {
 	    }
 	}
     }
+    
+    public Deck(boolean whatever) {
+	deck = new ArrayList<>();
+	for (int i = 0; i < 52; i++) {
+	    deck.add(new Card(Suit.SPADES, Rank.FIVE));
+	}
+    }
 
     public int checkDeckSize() {
 	return deck.size();
