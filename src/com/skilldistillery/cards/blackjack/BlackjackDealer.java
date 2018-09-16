@@ -31,7 +31,7 @@ public class BlackjackDealer extends BlackjackPlayer {
 	takeACard((dealACard(isFaceUp)));
     }
 
-    public List<Card> getDealerDeck() {
+    public List<Card> getDeck() {
 	return deck.getDeck();
     }
 

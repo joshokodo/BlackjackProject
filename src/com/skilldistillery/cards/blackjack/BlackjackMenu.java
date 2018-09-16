@@ -24,8 +24,9 @@ public class BlackjackMenu extends AbstractMenu {
     private final static String PLAY_AGAIN_MENU_OPTION_1 = "1. Yes";
     private final static String PLAY_AGAIN_MENU_OPTION_2 = "2. No";
     
-    private final static String RESULTS_MENU_HEADER_1 = "Congrats! Looks like you won!";
-    private final static String RESULTS_MENU_HEADER_2 = "Rats! Looks like you lost!";
+    private final static String WIN_MENU_HEADER_1 = "Congrats! Looks like you won!";
+    private final static String LOSE_MENU_HEADER_2 = "Rats! Looks like you lost!";
+    private final static String TIE_MENU_HEADER_3 = "Hmm! Looks like a push (tie)! oh well.";
     
 
     private final static String EXIT_MESSAGE = "Thanks for playing. hope you won a bunch.";
@@ -43,14 +44,14 @@ public class BlackjackMenu extends AbstractMenu {
 	addOption(MAIN_MENU_OPTION_2);
     }
 
-    public void setAsUserMenu() {
+    public void setAsGameMenu() {
 	clearAll();
 	addHeader(GAME_MENU_HEADER_1);
 	addOption(GAME_MENU_OPTION_1);
 	addOption(GAME_MENU_OPTION_2);
     }
 
-    public void setAsUserMenuWithSplitOption() {
+    public void setAsGameMenuWithSplitOption() {
 	clearAll();
 	addHeader(GAME_MENU_HEADER_1);
 	addOption(GAME_MENU_OPTION_1);
@@ -58,10 +59,30 @@ public class BlackjackMenu extends AbstractMenu {
 	addOption(GAME_MENU_OPTION_3);
     }
     
-    public void setAsPlayAgainMenu(boolean wonLastGame, long playerMoney) {
+    public void setAsWinPlayAgainMenu(long playerMoney) {
 	clearAll();
 	
-	addHeader(wonLastGame ? RESULTS_MENU_HEADER_1 : RESULTS_MENU_HEADER_2);
+	addHeader(WIN_MENU_HEADER_1);
+	
+	addHeader(BETS_MENU_HEADER_1 + playerMoney);
+	addHeader(PLAY_AGAIN_MENU_HEADER_1);
+	addOption(PLAY_AGAIN_MENU_OPTION_1);
+	addOption(PLAY_AGAIN_MENU_OPTION_2);
+    }
+    public void setAsLosePlayAgainMenu(long playerMoney) {
+	clearAll();
+	
+	addHeader(LOSE_MENU_HEADER_2);
+	
+	addHeader(BETS_MENU_HEADER_1 + playerMoney);
+	addHeader(PLAY_AGAIN_MENU_HEADER_1);
+	addOption(PLAY_AGAIN_MENU_OPTION_1);
+	addOption(PLAY_AGAIN_MENU_OPTION_2);
+    }
+    public void setAsTiePlayAgainMenu(long playerMoney) {
+	clearAll();
+	
+	addHeader(TIE_MENU_HEADER_3);
 	
 	addHeader(BETS_MENU_HEADER_1 + playerMoney);
 	addHeader(PLAY_AGAIN_MENU_HEADER_1);
