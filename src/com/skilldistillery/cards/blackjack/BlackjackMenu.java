@@ -12,11 +12,15 @@ public class BlackjackMenu extends AbstractMenu {
     private final static String MAIN_MENU_OPTION_1 = "1. Play BlackJack";
     private final static String MAIN_MENU_OPTION_2 = "2. Exit Program";
 
+    private final static String GAME_MENU_HEADER_FOR_HAND = "So...what's your next move with the first hand?";
+    private final static String GAME_MENU_HEADER_FOR_SPLIT_HAND = "So...what's your next move with the split hand?";
+    
     private final static String GAME_MENU_HEADER_1 = "So...what's your next move?";
     private final static String GAME_MENU_OPTION_1 = "1. Hit";
     private final static String GAME_MENU_OPTION_2 = "2. Stay";
     private final static String GAME_MENU_OPTION_3 = "3. Double Down";
     private final static String GAME_MENU_OPTION_4 = "4. Split";
+    
     
     private final static String BETS_MENU_HEADER_1 = "You currently have $";
     private final static String BETS_MENU_HEADER_2 = "Okay, hotshot. Place your bet! ($5 Minimum)";
@@ -50,6 +54,20 @@ public class BlackjackMenu extends AbstractMenu {
 	clearAll();
 	addHeader(GENERAL_BETS_MENU_HEADER + betAmount);
 	addHeader(GAME_MENU_HEADER_1);
+	addOption(GAME_MENU_OPTION_1);
+	addOption(GAME_MENU_OPTION_2);
+    }
+    public void setAsGameMenuForHand(long betAmount) {
+	clearAll();
+	addHeader(GENERAL_BETS_MENU_HEADER + betAmount);
+	addHeader(GAME_MENU_HEADER_FOR_HAND);
+	addOption(GAME_MENU_OPTION_1);
+	addOption(GAME_MENU_OPTION_2);
+    }
+    public void setAsGameMenuForSplitHand(long betAmount) {
+	clearAll();
+	addHeader(GENERAL_BETS_MENU_HEADER + betAmount);
+	addHeader(GAME_MENU_HEADER_FOR_SPLIT_HAND);
 	addOption(GAME_MENU_OPTION_1);
 	addOption(GAME_MENU_OPTION_2);
     }

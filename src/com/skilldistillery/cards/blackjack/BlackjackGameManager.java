@@ -13,15 +13,21 @@ public class BlackjackGameManager implements UserInput {
     private BlackjackDealer dealer;
     private boolean gameover;
     private boolean playerWon;
+    private boolean stillPlaying;
+    private int choice;
+    private int choiceMax;
     private long bet;
 
     public BlackjackGameManager() {
 	menu = new BlackjackMenu();
 	player = new BlackjackPlayer();
 	dealer = new BlackjackDealer();
-	//dealer = new BlackjackDealer(true);
+//	dealer = new BlackjackDealer(true);
 	gameover = false;
 	playerWon = false;
+	stillPlaying = false;
+	choice = -1;
+	choiceMax = 2;
 	bet = 0;
 
     }
@@ -32,45 +38,31 @@ public class BlackjackGameManager implements UserInput {
 	game.runProgram();
     }
 
+    // runs program and gives user option to exit
     public void runProgram() {
 	menu.setAsMainMenu();
 	menu.printMenu();
 	performMainMenuOption(getIntInput(1, 2));
 
     }
-
+    
+    // starts game loop
     public void playGame() {
-
-	boolean stillPlaying = true;
 
 	while (stillPlaying) {
 
 	    initialStart();
-	    bet = placeBet(); // returns zero if player can't bet at least minimum
-
-	    if (bet <= 0) {
-		exitProgram();
-	    }
-
-	    // shows opening hand of player and sets up game menu
+	    
+	    placeBet(); 
+	    
 	    printGameStatus();
 	    
-	    int choice = -1;
-	    int choiceMax = 2;
-	    
-	    if(playerCanSplit()) {
-		menu.setAsInitialGameMenuWithSplitOption(bet);
-		choiceMax = 4;
-	    }
-	    else {
-		menu.setAsInitialGameMenu(bet);
-		choiceMax = 3;
-	    }
-	    
+	    setInitialOptions();
 	    
 	    while (!gameover) {
 
-		if (playerIsDone()) {
+		// checks if player has a blackjack or has busted
+		if (playerHandIsDone(player.getHand())) {
 		    gameover = true;
 		} 
 		else {
@@ -79,32 +71,25 @@ public class BlackjackGameManager implements UserInput {
 		    choice = getIntInput(1, choiceMax);
 		    choiceMax = 2;
 		    
-		    performGameMenuOption(choice);
+		    performGameOption(choice);
 		    menu.setAsGameMenu(bet);
 		    
-		    if(choice == 3) {
-			performGameMenuOption(2);
-		    }
-		    else if(choice == 4) {
-			
-		    }
-		    gameover = dealerIsDone();
+		    gameover = dealerHandIsDone();
 		}
 	    }
-
-	    playerWon = didPlayerWin();
+	    
+	    didPlayerWin();
 	    gameAftermath();
-
-	    menu.printMenu();
-	    choice = getIntInput(1, 2);
-	    stillPlaying = choice == 1 ? true : false;
-
 	    resetRound();
 
 	}
 	exitProgram();
     }
 
+    
+    // determines if player won game and calculates betting accordingly
+    // sets appropriate "play again" menu, prompting user to continue
+    // game or to exit program
     private void gameAftermath() {
 	if (playerWon) {
 	    player.winMoney(bet);
@@ -113,7 +98,7 @@ public class BlackjackGameManager implements UserInput {
 	else {
 
 	    // if game was pushed
-	    if (hasSameValue(player, dealer)) {
+	    if (hasSameValue(player.getHand(), dealer.getHand())) {
 		menu.setAsTiePlayAgainMenu(player.getMoney());
 	    } 
 	    else {
@@ -121,12 +106,20 @@ public class BlackjackGameManager implements UserInput {
 		menu.setAsLosePlayAgainMenu(player.getMoney(), bet);
 	    }
 	}
+	
+	menu.printMenu();
+	choice = getIntInput(1, 2);
+	stillPlaying = choice == 1 ? true : false;
     }
-
+  
+    
+    // executes code that either starts a new game 
+    // or exits program
     private void performMainMenuOption(int choice) {
 	switch (choice) {
 
 	case 1:
+	    stillPlaying = true;
 	    playGame();
 	    break;
 
@@ -134,31 +127,55 @@ public class BlackjackGameManager implements UserInput {
 	    exitProgram();
 	}
     }
+    
+    // has dealer deal a card to the passed in arg (hand)
+    // intended for flexibility to facilitate split feature
+    private void dealCardToHand(BlackjackHand hand) {
+	hand.addCard(dealer.dealACard(true));
+	adjustAces(hand);
+	
+    }
 
-    private void performGameMenuOption(int choice) {
+    // executes code according to user input that either doubles
+    // down the bet and follows double down protocol, hit (deals card to player)
+    // or stays ( goes to dealers turn protocol) 
+    private void performGameOption(int choice) {
 	switch (choice) {
 	
 	case 3:
 	    bet *= 2;
+	    
 	case 1:
-	    player.addCardToHand(dealer.dealACard(true));
-	    checkAces(player);
+	    dealCardToHand(player.getHand());
 	    printGameStatus();
-	    break;
+	    if(choice != 3) {
+		break;
+	    }
 
 	case 2:
 	    dealersTurn();
 	    break;
 	    
 	case 4:
-	    player.splitTheHand();
+	    // TODO create method to hand entire split protocol. add code below?
+//	    player.splitTheHand();
+//	    dealCardToHand(player.getHand());
+//	    dealCardToHand(player.getSplitHand());
+//	    bet *= 2;
+//	    printGameStatus();
+//	    menu.setAsGameMenuForHand(bet);
 	    break;
+	
 	default:
 	    System.out.println("Im from performGameMenuOption default case. I Shouldnt be printing");
 
 	}
 
     }
+    
+    // has dealer continually deal to itself until it hand is at a condition
+    // that doesn't allow the dealer to make any more moves according to blackjack
+    // rules or wind/lose conditions
 
     private void dealersTurn() {
 
@@ -168,16 +185,17 @@ public class BlackjackGameManager implements UserInput {
 
 	while (true) {
 
-	    if (dealerIsDone()) {
+	    if (dealerHandIsDone()) {
 		return;
 	    }
 
 	    dealer.dealCardToSelf(true);
-	    checkAces(dealer);
+	    adjustAces(dealer.getHand());
 	    printGameStatus();
 	}
     }
 
+    // sets and prints an exit message and closes implemented scanner input
     private void exitProgram() {
 	menu.setAsExitMenu();
 	menu.printMenu();
@@ -186,24 +204,33 @@ public class BlackjackGameManager implements UserInput {
 
     }
 
+    // clears player and dealers hands and checks to see if replenishing deck
+    // is necessary
     private void resetRound() {
 	player.getAllCardsFromHand().clear();
+	player.getAllCardsFromSplitHand().clear();
 	dealer.getAllCardsFromHand().clear();
 	checkToReplenish();
     }
 
+    // resets game logic fields, shuffles dealers deck
+    // and deals starting hand to players
     private void initialStart() {
 	gameover = false;
 	playerWon = false;
+	choice = -1;
+	choiceMax = 2;
 	bet = 0;
 
 	dealer.shuffleDeck();
-	player.addCardToHand(dealer.dealACard(true));
-	dealer.dealCardToSelf(true);
-	player.addCardToHand(dealer.dealACard(true));
+	dealCardToHand(player.getHand());
+	dealCardToHand(dealer.getHand());
+	dealCardToHand(player.getHand());
 	dealer.dealCardToSelf(false);
     }
 
+    // checks if dealers deck is getting low, if so
+    // adds a new deck to existing deck and shuffles
     private void checkToReplenish() {
 	if (dealer.getDeck().size() <= 15) {
 	    dealer.replenishDeck();
@@ -211,6 +238,8 @@ public class BlackjackGameManager implements UserInput {
 	}
     }
 
+    // goes thru entire list of cards passed and prints 
+    //  ascii art form to screen
     private void printCards(List<Card> hand) {
 	StringBuilder cards = new StringBuilder();
 	for (int i = 0; i < 5; i++) {
@@ -225,9 +254,10 @@ public class BlackjackGameManager implements UserInput {
 
     }
 
+    // gets hand value for both dealer and player and displays it
+    // along with ascii art form to the screen
     private void printGameStatus() {
 	int dealerValue = dealer.getHandValue();
-
 	int playerValue = player.getHandValue();
 
 	printCards(dealer.getAllCardsFromHand());
@@ -235,28 +265,38 @@ public class BlackjackGameManager implements UserInput {
 
 	printCards(player.getAllCardsFromHand());
 	System.out.println("Your hand value: " + playerValue);
+	
+	boolean hasSplitHand = player.getAllCardsFromSplitHand().size() > 0;
+	if(hasSplitHand) {
+	    int playerSplitValue = player.getSplitHandValue();
+	    printCards(player.getAllCardsFromSplitHand());
+	    System.out.println("Your Split hand value: " + playerSplitValue);
+	}
 	System.out.println("-------------------------------------------------------");
     }
 
-    private long placeBet() {
+    // Determines if player has at least enough money to place the minimum bet
+    // and prompts user for bet and sets bet Amount to users input
+    private void placeBet() {
 	if (player.getMoney() >= 5) {
 
 	    menu.setAsBetsMenu(player.getMoney());
 	    menu.printMenu();
-	    return getLongInput(5, player.getMoney());
+	    bet = getLongInput(5, player.getMoney());
 	} 
 	else {
 	    System.out.println("Looks like you got no money to spend.");
 	    System.out.println("Come back when you got some doe.");
-	    return 0;
+	    exitProgram();
 	}
     }
 
-    
-    private void checkAces(AbstractBlackjackPlayer player) {
-	if (someoneBusted(player)) {
+    // checks if hand passed is a Bust. if so, checks for soft aces
+    // and replaces its value as hard aces
+    private void adjustAces(BlackjackHand hand) {
+	if (handBusted(hand)) {
 	    
-	    for (Card card : player.getAllCardsFromHand()) {
+	    for (Card card : hand.getCards()) {
 		
 		if(card.getRank().equals(Rank.HIGH_ACE)) {
 		    card.setRank(Rank.LOW_ACE);
@@ -264,7 +304,29 @@ public class BlackjackGameManager implements UserInput {
 	    }
 	}
     }
-    // condition checks
+    
+    // sets initial game menu depending of if split is an option
+    // or not
+    private void setInitialOptions() {
+	// TODO uncomment below when ready to add split feature. delete code below commented
+	
+//	if(playerCanSplit()) {
+//	    menu.setAsInitialGameMenuWithSplitOption(bet);
+//	    choiceMax = 4;
+//	}
+//	else {
+//	    menu.setAsInitialGameMenu(bet);
+//	    choiceMax = 3;
+//	}
+	
+	menu.setAsInitialGameMenu(bet);
+	choiceMax = 3;
+	
+    }
+    
+    // condition checks methods
+    
+    // returns true if player has the option to split, false otherwise
     private boolean playerCanSplit() {
 	if(player.getAllCardsFromHand().size() == 2) {
 	    Rank cardRank1 = player.getCardFromHand(0).getRank();
@@ -274,36 +336,43 @@ public class BlackjackGameManager implements UserInput {
 	}
 	return false;
     }
-    private boolean someoneBusted(AbstractBlackjackPlayer player) {
+    private boolean handBusted(BlackjackHand hand) {
 	return player.getHandValue() > 21;
     }
 
-    private boolean hasBetterValue(AbstractBlackjackPlayer p1, AbstractBlackjackPlayer p2) {
-	return p1.getHandValue() > p2.getHandValue();
+    private boolean hasBetterValue(BlackjackHand hand1, BlackjackHand hand2) {
+	return hand1.getTotalValue() > hand2.getTotalValue();
     }
 
-    private boolean hasBlackjack(AbstractBlackjackPlayer player) {
-	return player.getHandValue() == 21;
+    private boolean hasBlackjack(BlackjackHand hand) {
+	return hand.getTotalValue() == 21;
     }
 
-    private boolean hasSameValue(AbstractBlackjackPlayer p1, AbstractBlackjackPlayer p2) {
-	return p1.getHandValue() == p2.getHandValue();
+    private boolean hasSameValue(BlackjackHand hand1, BlackjackHand hand2) {
+	return hand1.getTotalValue() == hand2.getTotalValue();
     }
 
     private boolean dealerPastSeventeen() {
 	return dealer.getHandValue() >= 17;
     }
 
-    private boolean playerIsDone() {
-	return someoneBusted(player) || hasBlackjack(player);
+    // checks if hand passed in is in a condition that will not allow anymore
+    // turns for it. BlackjackHand arg is to facilitate split feature
+    private boolean playerHandIsDone(BlackjackHand hand) {
+	return handBusted(hand) || hasBlackjack(hand);
     }
 
-    private boolean dealerIsDone() {
-	return dealerPastSeventeen() || someoneBusted(dealer) || 
-		hasBetterValue(dealer, player) || hasBlackjack(dealer);
+    // checks if dealer hand is in a condition that will not allow anymore
+    // turns for it
+    private boolean dealerHandIsDone() {
+	return dealerPastSeventeen() || handBusted(dealer.getHand()) || 
+		hasBetterValue(dealer.getHand(), player.getHand()) 
+		|| hasBlackjack(dealer.getHand());
     }
 
-    private boolean didPlayerWin() {
+    // determines if player is winner of the game and sets the playerWon field
+    // accordingly
+    private void didPlayerWin() {
 
 	// ensures dealers hidden card is accounted for
 	// when determining winner and prints last game status
@@ -313,11 +382,12 @@ public class BlackjackGameManager implements UserInput {
 	    printGameStatus();
 	}
 	
-	boolean winCondition1 = hasBlackjack(player) && !hasBlackjack(dealer);
-	boolean winCondition2 = !someoneBusted(player) && hasBetterValue(player, dealer);
-	boolean winCondition3 = someoneBusted(dealer);
+	boolean winCondition1 = hasBlackjack(player.getHand()) && !hasBlackjack(dealer.getHand());
+	boolean winCondition2 = !handBusted(player.getHand()) && handBusted(dealer.getHand());
+	boolean winCondition3 = !handBusted(player.getHand()) 
+					&& hasBetterValue(player.getHand(), dealer.getHand());
 	
-	return winCondition1 || winCondition2 || winCondition3;
+	playerWon = winCondition1 || winCondition2 || winCondition3;
     }
 
 }
