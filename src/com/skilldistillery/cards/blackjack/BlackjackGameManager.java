@@ -22,7 +22,7 @@ public class BlackjackGameManager implements UserInput {
 	menu = new BlackjackMenu();
 	player = new BlackjackPlayer();
 	dealer = new BlackjackDealer();
-//	dealer = new BlackjackDealer(true);
+//	dealer = new BlackjackDealer(true); // used for testing split 
 	gameover = false;
 	playerWon = false;
 	stillPlaying = false;
