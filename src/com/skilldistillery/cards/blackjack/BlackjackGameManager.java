@@ -75,7 +75,7 @@ public class BlackjackGameManager implements UserInput {
 		while (stillPlaying) {
 
 			initialStart();
-			 setUpToTestDealerKeepsHittingTilSeventeen();
+//			 setUpToTestDealerKeepsHittingTilSeventeen();
 			placeBet();
 
 			printGameStatus();
