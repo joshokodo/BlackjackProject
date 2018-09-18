@@ -15,16 +15,16 @@ public class Deck {
 	deck = new ArrayList<>();
 
 	for (Suit suit : suits) {
-	    
+
 	    for (Rank rank : ranks) {
-		
-		if(!rank.equals(Rank.LOW_ACE)) {
+
+		if (!rank.equals(Rank.LOW_ACE)) {
 		    deck.add(new Card(suit, rank));
 		}
 	    }
 	}
     }
-    
+
     // used to test split feature by making every card the same
 //    public Deck(boolean whatever) {
 //	deck = new ArrayList<>();
@@ -43,8 +43,7 @@ public class Deck {
 
 	if (isFaceUp) {
 	    dealtCard.flipCardUp();
-	} 
-	else {
+	} else {
 	    dealtCard.flipCardDown();
 	}
 

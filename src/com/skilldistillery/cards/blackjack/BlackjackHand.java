@@ -14,7 +14,7 @@ public class BlackjackHand extends Hand {
 	int handValue = 0;
 
 	for (Card card : getCards()) {
-	    if(card.isFaceUp()) {
+	    if (card.isFaceUp()) {
 		handValue += card.getValue();
 	    }
 	}

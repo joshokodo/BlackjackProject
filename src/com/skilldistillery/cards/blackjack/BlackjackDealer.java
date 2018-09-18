@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.skilldistillery.cards.common.Card;
 import com.skilldistillery.cards.common.Deck;
+import com.skilldistillery.cards.common.Rank;
+import com.skilldistillery.cards.common.Suit;
 
 public class BlackjackDealer extends AbstractBlackjackPlayer {
 
@@ -14,7 +16,27 @@ public class BlackjackDealer extends AbstractBlackjackPlayer {
 	super();
 	deck = new Deck();
     }
-    
+
+    public BlackjackDealer(int whatever) {
+	super();
+	deck = new Deck();
+
+	int index = deck.checkDeckSize();
+
+	deck.getDeck().set(--index, new Card(Suit.SPADES, Rank.FOUR));
+	deck.getDeck().set(--index, new Card(Suit.SPADES, Rank.FOUR));
+
+	deck.getDeck().set(--index, new Card(Suit.SPADES, Rank.FIVE));
+	deck.getDeck().set(--index, new Card(Suit.SPADES, Rank.FIVE));
+
+	deck.getDeck().set(--index, new Card(Suit.SPADES, Rank.FIVE));
+	deck.getDeck().set(--index, new Card(Suit.SPADES, Rank.FIVE));
+
+	deck.getDeck().set(--index, new Card(Suit.SPADES, Rank.TWO));
+	deck.getDeck().set(--index, new Card(Suit.SPADES, Rank.TWO));
+
+    }
+
     // used to test split feature
 //    public BlackjackDealer(boolean whatever) {
 //	super();

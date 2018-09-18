@@ -57,39 +57,37 @@ public class Card {
 	card.append(" of " + suit.toString());
 	return card.toString();
     }
-   
-    
+
     // setters and getters
-    
+
     public int getValue() {
 	return rank.getValue();
     }
-    
+
     public Suit getSuit() {
-        return suit;
+	return suit;
     }
 
     public void setSuit(Suit suit) {
-        this.suit = suit;
+	this.suit = suit;
     }
 
     public Rank getRank() {
-        return rank;
+	return rank;
     }
 
     public void setRank(Rank rank) {
-        this.rank = rank;
+	this.rank = rank;
     }
 
     public boolean isFaceUp() {
-        return isFaceUp;
+	return isFaceUp;
     }
 
     public void setFaceUp(boolean isFaceUp) {
-        this.isFaceUp = isFaceUp;
+	this.isFaceUp = isFaceUp;
     }
 
-    
     // asciiCard methods
     public void buildAsciiCard() {
 
@@ -99,8 +97,7 @@ public class Card {
 	    asciiCard[2] = MIDDLE_OF_CARD_FACE_DOWN;
 	    asciiCard[3] = MIDDLE_OF_CARD_FACE_DOWN;
 	    asciiCard[4] = BOTTOM_OF_CARD_FACE_DOWN;
-	} 
-	else {
+	} else {
 
 	    String topValue = rank.equals(Rank.TEN) ? TOP_VALUE_OF_CARD_IS_TEN : TOP_VALUE_OF_CARD;
 
@@ -128,9 +125,8 @@ public class Card {
 	return asciiCard[index];
     }
 
-    
     // other methods
-    
+
     public void flipCardUp() {
 	this.isFaceUp = true;
 	buildAsciiCard();
