@@ -68,6 +68,7 @@ public class BlackjackGameManager implements UserInput {
 
 	}
 
+
 	// starts game loop
 	private void playGame() {
 
@@ -75,7 +76,6 @@ public class BlackjackGameManager implements UserInput {
 
 			initialStart();
 			// setUpToTestDealerKeepsHittingTilSeventeen();
-
 			placeBet();
 
 			printGameStatus();
@@ -392,7 +392,8 @@ public class BlackjackGameManager implements UserInput {
 	private boolean dealerHandIsDone() {
 		return dealerPastSeventeen() && (handBusted(dealer.getHand())
 				|| hasBetterValue(dealer.getHand(), player.getHand())
-				|| hasBlackjack(dealer.getHand()));
+				|| hasBlackjack(dealer.getHand())
+				|| hasSameValue(player.getHand(), dealer.getHand()));
 	}
 
 	// determines if player is winner of the game and sets the playerWon field
