@@ -75,7 +75,7 @@ public class BlackjackGameManager implements UserInput {
 		while (stillPlaying) {
 
 			initialStart();
-			// setUpToTestDealerKeepsHittingTilSeventeen();
+			 setUpToTestDealerKeepsHittingTilSeventeen();
 			placeBet();
 
 			printGameStatus();
@@ -97,7 +97,7 @@ public class BlackjackGameManager implements UserInput {
 					performGameOption(choice);
 					menu.setAsGameMenu(bet);
 
-					gameover = dealerHandIsDone();
+					gameover = dealerPastSeventeen();
 				}
 			}
 
@@ -207,7 +207,7 @@ public class BlackjackGameManager implements UserInput {
 
 		while (true) {
 
-			if (dealerHandIsDone()) {
+			if (dealerPastSeventeen()) {
 				return;
 			}
 
@@ -385,15 +385,6 @@ public class BlackjackGameManager implements UserInput {
 	// turns for it. BlackjackHand arg is to facilitate split feature
 	private boolean playerHandIsDone(BlackjackHand hand) {
 		return handBusted(hand) || hasBlackjack(hand);
-	}
-
-	// checks if dealer hand is in a condition that will not allow anymore
-	// turns for it
-	private boolean dealerHandIsDone() {
-		return dealerPastSeventeen() && (handBusted(dealer.getHand())
-				|| hasBetterValue(dealer.getHand(), player.getHand())
-				|| hasBlackjack(dealer.getHand())
-				|| hasSameValue(player.getHand(), dealer.getHand()));
 	}
 
 	// determines if player is winner of the game and sets the playerWon field
