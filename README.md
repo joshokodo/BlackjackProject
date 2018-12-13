@@ -1,5 +1,5 @@
 ## Week 3 Homework: Blackjack Project
-
+![Alt text](blackjackimg.png "Front Page")
 ### Overview
 This program was to assigned to test and practice all java knowledge we have learned so far in preparation for the OCA Exam the form of a blackjack game. It encompasses all of the basics of programming in java including the basics of OOP and general programming practices
 
