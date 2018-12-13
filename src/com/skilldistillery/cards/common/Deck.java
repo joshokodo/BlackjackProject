@@ -25,14 +25,6 @@ public class Deck {
 		}
 	}
 
-	// used to test split feature by making every card the same
-	// public Deck(boolean whatever) {
-	// deck = new ArrayList<>();
-	// for (int i = 0; i < 52; i++) {
-	// deck.add(new Card(Suit.SPADES, Rank.FIVE));
-	// }
-	// }
-
 	public int checkDeckSize() {
 		return deck.size();
 	}

@@ -1,8 +1,8 @@
 package com.skilldistillery.cards.blackjack;
 
-import com.skilldistillery.myutils.AbstractMenu;
+import com.skilldistillery.myutils.consoleUI.*;
 
-public class BlackjackMenu extends AbstractMenu {
+public class BlackjackMenu extends AbstractUI {
 
 	private final static char MENU_BORDER_LINING = '\u2664';
 

@@ -1,8 +1,8 @@
-package com.skilldistillery.myutils;
+package com.skilldistillery.myutils.consoleUI;
 
 import java.util.Scanner;
 
-public interface UserInput {
+public interface UserInputInterface {
 
 	final Scanner KEYBOARD = new Scanner(System.in);
 	final String INVALID_INPUT_PROMPT = "Not a valid input. Please try again.";

@@ -5,9 +5,9 @@ import java.util.List;
 import com.skilldistillery.cards.common.Card;
 import com.skilldistillery.cards.common.Rank;
 import com.skilldistillery.cards.common.Suit;
-import com.skilldistillery.myutils.UserInput;
+import com.skilldistillery.myutils.consoleUI.*;
 
-public class BlackjackGameManager implements UserInput {
+public class BlackjackGameManager implements UserInputInterface {
 
 	private BlackjackMenu menu;
 	private BlackjackPlayer player;
@@ -75,7 +75,6 @@ public class BlackjackGameManager implements UserInput {
 		while (stillPlaying) {
 
 			initialStart();
-//			 setUpToTestDealerKeepsHittingTilSeventeen();
 			placeBet();
 
 			printGameStatus();
@@ -230,7 +229,6 @@ public class BlackjackGameManager implements UserInput {
 	// is necessary
 	private void resetRound() {
 		player.getAllCardsFromHand().clear();
-		player.getAllCardsFromSplitHand().clear();
 		dealer.getAllCardsFromHand().clear();
 		checkToReplenish();
 	}
@@ -288,12 +286,7 @@ public class BlackjackGameManager implements UserInput {
 		printCards(player.getAllCardsFromHand());
 		System.out.println("Your hand value: " + playerValue);
 
-		boolean hasSplitHand = player.getAllCardsFromSplitHand().size() > 0;
-		if (hasSplitHand) {
-			int playerSplitValue = player.getSplitHandValue();
-			printCards(player.getAllCardsFromSplitHand());
-			System.out.println("Your Split hand value: " + playerSplitValue);
-		}
+	
 		System.out.println(
 				"-------------------------------------------------------");
 	}

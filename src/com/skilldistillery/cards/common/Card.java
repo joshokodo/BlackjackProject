@@ -18,7 +18,7 @@ public class Card {
 	private String[] asciiCard = new String[5];
 
 	public Card() {
-
+		
 	}
 
 	public Card(Suit suit, Rank rank) {

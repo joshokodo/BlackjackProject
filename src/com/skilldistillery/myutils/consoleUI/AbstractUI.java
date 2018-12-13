@@ -1,9 +1,9 @@
-package com.skilldistillery.myutils;
+package com.skilldistillery.myutils.consoleUI;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractMenu {
+public abstract class AbstractUI {
 
 	private final int SPACING_CUSHION = 4;
 
@@ -12,13 +12,13 @@ public abstract class AbstractMenu {
 	private List<String> options;
 	private char lining;
 
-	public AbstractMenu() {
+	public AbstractUI() {
 		headers = new ArrayList<>();
 		options = new ArrayList<>();
 		lining = '*';
 	}
 
-	public AbstractMenu(char lining) {
+	public AbstractUI(char lining) {
 		headers = new ArrayList<>();
 		options = new ArrayList<>();
 		this.lining = lining;
