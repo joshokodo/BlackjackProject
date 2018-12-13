@@ -38,4 +38,4 @@ more error checks and exception handling would have guaranteed no errors.
 
 
 #### Stretch Goals
-- I wanted to add a split hand functionality and refactor the UI code to be more effecient
+- I wanted to add a split hand functionality and refactor the UI code to be more efficient
