@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.skilldistillery.cards.common.Card;
 import com.skilldistillery.cards.common.Rank;
-import com.skilldistillery.cards.common.Suit;
 import com.skilldistillery.myutils.consoleUI.*;
 
 public class BlackjackGameManager implements UserInputInterface {
@@ -46,28 +45,6 @@ public class BlackjackGameManager implements UserInputInterface {
 
 	}
 
-	// sets up a condition where if player stays on the first turn
-	// dealer will continue to hit til 17 even if its score beats the
-	// players before getting to at least 17
-	private void setUpToTestDealerKeepsHittingTilSeventeen() {
-		int index = dealer.getDeck().size();
-
-		player.getAllCardsFromHand().set(0, new Card(Suit.SPADES, Rank.FIVE));
-		player.getAllCardsFromHand().set(1, new Card(Suit.SPADES, Rank.FIVE));
-		dealer.getAllCardsFromHand().set(0, new Card(Suit.SPADES, Rank.FOUR));
-		dealer.getAllCardsFromHand().set(1, new Card(Suit.SPADES, Rank.FIVE));
-
-		for (int i = 0; i < 2; i++) {
-			player.getAllCardsFromHand().get(i).flipCardUp();
-			dealer.getAllCardsFromHand().get(i).flipCardUp();
-		}
-		dealer.getAllCardsFromHand().get(1).flipCardDown();
-
-		dealer.getDeck().set(--index, new Card(Suit.SPADES, Rank.FIVE));
-		dealer.getDeck().set(--index, new Card(Suit.SPADES, Rank.TWO));
-
-	}
-
 
 	// starts game loop
 	private void playGame() {
@@ -96,7 +73,7 @@ public class BlackjackGameManager implements UserInputInterface {
 					performGameOption(choice);
 					menu.setAsGameMenu(bet);
 
-					gameover = dealerPastSeventeen();
+					gameover = dealer.getHand().hasAtLeast17();
 				}
 			}
 
@@ -206,7 +183,7 @@ public class BlackjackGameManager implements UserInputInterface {
 
 		while (true) {
 
-			if (dealerPastSeventeen()) {
+			if (dealer.getHand().hasAtLeast17()) {
 				return;
 			}
 
@@ -309,7 +286,7 @@ public class BlackjackGameManager implements UserInputInterface {
 	// checks if hand passed is a Bust. if so, checks for soft aces
 	// and replaces its value as hard aces
 	private void adjustAces(BlackjackHand hand) {
-		if (handBusted(hand)) {
+		if (hand.hasBusted()) {
 
 			for (Card card : hand.getCards()) {
 
@@ -323,19 +300,6 @@ public class BlackjackGameManager implements UserInputInterface {
 	// sets initial game menu depending of if split is an option
 	// or not
 	private void setInitialOptions() {
-		// TODO uncomment below when ready to add split feature. delete code
-		// below
-		// commented
-
-		// if(playerCanSplit()) {
-		// menu.setAsInitialGameMenuWithSplitOption(bet);
-		// choiceMax = 4;
-		// }
-		// else {
-		// menu.setAsInitialGameMenu(bet);
-		// choiceMax = 3;
-		// }
-
 		menu.setAsInitialGameMenu(bet);
 		choiceMax = 3;
 
@@ -354,30 +318,22 @@ public class BlackjackGameManager implements UserInputInterface {
 		return false;
 	}
 
-	private boolean handBusted(BlackjackHand hand) {
-		return hand.getTotalValue() > 21;
-	}
-
 	private boolean hasBetterValue(BlackjackHand hand1, BlackjackHand hand2) {
 		return hand1.getTotalValue() > hand2.getTotalValue();
 	}
 
-	private boolean hasBlackjack(BlackjackHand hand) {
-		return hand.getTotalValue() == 21;
-	}
+
 
 	private boolean hasSameValue(BlackjackHand hand1, BlackjackHand hand2) {
 		return hand1.getTotalValue() == hand2.getTotalValue();
 	}
 
-	private boolean dealerPastSeventeen() {
-		return dealer.getHandValue() >= 17;
-	}
+	
 
 	// checks if hand passed in is in a condition that will not allow anymore
 	// turns for it. BlackjackHand arg is to facilitate split feature
 	private boolean playerHandIsDone(BlackjackHand hand) {
-		return handBusted(hand) || hasBlackjack(hand);
+		return hand.hasBusted() || hand.hasBlackjack();
 	}
 
 	// determines if player is winner of the game and sets the playerWon field
@@ -392,11 +348,11 @@ public class BlackjackGameManager implements UserInputInterface {
 			printGameStatus();
 		}
 
-		boolean winCondition1 = hasBlackjack(player.getHand())
-				&& !hasBlackjack(dealer.getHand());
-		boolean winCondition2 = !handBusted(player.getHand())
-				&& handBusted(dealer.getHand());
-		boolean winCondition3 = !handBusted(player.getHand())
+		boolean winCondition1 = player.getHand().hasBlackjack()
+				&& !dealer.getHand().hasBlackjack();
+		boolean winCondition2 = !player.getHand().hasBusted()
+				&& dealer.getHand().hasBusted();
+		boolean winCondition3 = !player.getHand().hasBusted()
 				&& hasBetterValue(player.getHand(), dealer.getHand());
 
 		playerWon = winCondition1 || winCondition2 || winCondition3;

@@ -21,5 +21,15 @@ public class BlackjackHand extends Hand {
 
 		return handValue;
 	}
+	
+	public boolean hasBlackjack() {
+		return getTotalValue() == 21;
+	}
+	public boolean hasBusted() {
+		return getTotalValue() > 21;
+	}
+	public boolean hasAtLeast17() {
+		return getTotalValue() >= 17;
+	}
 
 }
